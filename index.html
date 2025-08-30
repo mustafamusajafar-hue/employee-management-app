@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة علاوات الموظفين والترقيات</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-users-cog"></i>
+                    نظام إدارة علاوات الموظفين
+                </h1>
+                <nav class="nav">
+                    <button class="nav-btn active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        لوحة التحكم
+                    </button>
+                    <button class="nav-btn" data-section="employees">
+                        <i class="fas fa-users"></i>
+                        الموظفين
+                    </button>
+                    <button class="nav-btn" data-section="appreciation">
+                        <i class="fas fa-award"></i>
+                        خطابات الشكر
+                    </button>
+                    <button class="nav-btn" data-section="penalties">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        العقوبات
+                    </button>
+                    <button class="nav-btn" data-section="reports">
+                        <i class="fas fa-chart-bar"></i>
+                        التقارير
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h2>لوحة التحكم الرئيسية</h2>
+                    <p>نظرة عامة على حالة العلاوات والترقيات</p>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card overdue">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="overdue-bonuses">0</h3>
+                            <p>علاوات مستحقة</p>
+                        </div>
+                    </div>
+                    <div class="stat-card upcoming">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="upcoming-bonuses">0</h3>
+                            <p>علاوات قادمة</p>
+                        </div>
+                    </div>
+                    <div class="stat-card promotion">
+                        <div class="stat-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="due-promotions">0</h3>
+                            <p>ترقيات مستحقة</p>
+                        </div>
+                    </div>
+                    <div class="stat-card total">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-employees">0</h3>
+                            <p>إجمالي الموظفين</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts Section -->
+                <div class="alerts-section">
+                    <h3>التنبيهات العاجلة</h3>
+                    <div id="alerts-container" class="alerts-container">
+                        <!-- Alerts will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <h3>النشاط الأخير</h3>
+                    <div id="recent-activity-list" class="activity-list">
+                        <!-- Recent activity will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Employees Section -->
+            <section id="employees" class="section">
+                <div class="section-header">
+                    <h2>إدارة الموظفين</h2>
+                    <button class="btn btn-primary" id="add-employee-btn">
+                        <i class="fas fa-plus"></i>
+                        إضافة موظف جديد
+                    </button>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="employee-search" placeholder="البحث عن موظف...">
+                    </div>
+                    <select id="status-filter" class="filter-select">
+                        <option value="">جميع الحالات</option>
+                        <option value="overdue">مستحق</option>
+                        <option value="upcoming">قادم</option>
+                        <option value="future">غير مستحق</option>
+                    </select>
+                </div>
+
+                <!-- Employees Table -->
+                <div class="table-container">
+                    <table class="employees-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الموظف</th>
+                                <th>الراتب الأساسي</th>
+                                <th>الدرجة الوظيفية</th>
+                                <th>تاريخ آخر علاوة</th>
+                                <th>العلاوة التالية</th>
+                                <th>حالة العلاوة</th>
+                                <th>حالة الترقية</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employees-table-body">
+                            <!-- Employee rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Appreciation Letters Section -->
+            <section id="appreciation" class="section">
+                <div class="section-header">
+                    <h2>خطابات الشكر والتقدير</h2>
+                    <button class="btn btn-primary" id="add-appreciation-btn">
+                        <i class="fas fa-plus"></i>
+                        إضافة خطاب شكر
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="appreciation-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الموظف</th>
+                                <th>تاريخ الخطاب</th>
+                                <th>سبب التقدير</th>
+                                <th>أشهر التقديم</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appreciation-table-body">
+                            <!-- Appreciation letters will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Penalties Section -->
+            <section id="penalties" class="section">
+                <div class="section-header">
+                    <h2>العقوبات</h2>
+                    <button class="btn btn-primary" id="add-penalty-btn">
+                        <i class="fas fa-plus"></i>
+                        إضافة عقوبة
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="penalties-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الموظف</th>
+                                <th>تاريخ العقوبة</th>
+                                <th>نوع العقوبة</th>
+                                <th>أشهر التأخير</th>
+                                <th>السبب</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="penalties-table-body">
+                            <!-- Penalties will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="section">
+                <div class="section-header">
+                    <h2>التقارير والإحصائيات</h2>
+                </div>
+
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h3>تقرير العلاوات المستحقة</h3>
+                        <p>قائمة بجميع الموظفين الذين لديهم علاوات مستحقة</p>
+                        <button class="btn btn-secondary" id="overdue-report-btn">
+                            <i class="fas fa-file-pdf"></i>
+                            تصدير التقرير
+                        </button>
+                    </div>
+                    <div class="report-card">
+                        <h3>تقرير الترقيات</h3>
+                        <p>قائمة بالترقيات المستحقة والقادمة</p>
+                        <button class="btn btn-secondary" id="promotions-report-btn">
+                            <i class="fas fa-file-excel"></i>
+                            تصدير التقرير
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal for Adding/Editing Employee -->
+    <div id="employee-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="employee-modal-title">إضافة موظف جديد</h3>
+                <button class="modal-close" id="employee-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="employee-form" class="modal-form">
+                <div class="form-group">
+                    <label for="employee-name">اسم الموظف</label>
+                    <input type="text" id="employee-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="employee-salary">الراتب الأساسي</label>
+                    <input type="number" id="employee-salary" name="basicSalary" required>
+                </div>
+                <div class="form-group">
+                    <label for="employee-grade">الدرجة الوظيفية</label>
+                    <select id="employee-grade" name="jobGrade" required>
+                        <option value="">اختر الدرجة</option>
+                        <option value="الدرجة الأولى">الدرجة الأولى</option>
+                        <option value="الدرجة الثانية">الدرجة الثانية</option>
+                        <option value="الدرجة الثالثة">الدرجة الثالثة</option>
+                        <option value="الدرجة الرابعة">الدرجة الرابعة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="employee-education">المؤهل العلمي</label>
+                    <select id="employee-education" name="education" required>
+                        <option value="">اختر المؤهل</option>
+                        <option value="ثانوية عامة">ثانوية عامة</option>
+                        <option value="دبلوم">دبلوم</option>
+                        <option value="بكالوريوس">بكالوريوس</option>
+                        <option value="ماجستير">ماجستير</option>
+                        <option value="دكتوراه">دكتوراه</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="employee-last-bonus">تاريخ آخر علاوة</label>
+                    <input type="date" id="employee-last-bonus" name="lastBonusDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="employee-last-promotion">تاريخ آخر ترقية</label>
+                    <input type="date" id="employee-last-promotion" name="lastPromotionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="employee-department">القسم</label>
+                    <input type="text" id="employee-department" name="department" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button" class="btn btn-secondary" id="employee-cancel-btn">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Appreciation Letter -->
+    <div id="appreciation-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة خطاب شكر</h3>
+                <button class="modal-close" id="appreciation-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="appreciation-form" class="modal-form">
+                <div class="form-group">
+                    <label for="appreciation-employee">اسم الموظف</label>
+                    <select id="appreciation-employee" name="employeeId" required>
+                        <option value="">اختر الموظف</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="appreciation-date">تاريخ الخطاب</label>
+                    <input type="date" id="appreciation-date" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="appreciation-reason">سبب التقدير</label>
+                    <textarea id="appreciation-reason" name="reason" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="appreciation-months">عدد أشهر التقديم</label>
+                    <input type="number" id="appreciation-months" name="monthsAdvanced" min="1" max="12" value="1" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button" class="btn btn-secondary" id="appreciation-cancel-btn">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Penalty -->
+    <div id="penalty-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة عقوبة</h3>
+                <button class="modal-close" id="penalty-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="penalty-form" class="modal-form">
+                <div class="form-group">
+                    <label for="penalty-employee">اسم الموظف</label>
+                    <select id="penalty-employee" name="employeeId" required>
+                        <option value="">اختر الموظف</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="penalty-date">تاريخ العقوبة</label>
+                    <input type="date" id="penalty-date" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="penalty-type">نوع العقوبة</label>
+                    <select id="penalty-type" name="type" required>
+                        <option value="">اختر نوع العقوبة</option>
+                        <option value="إنذار">إنذار</option>
+                        <option value="توبيخ">توبيخ</option>
+                        <option value="خصم">خصم</option>
+                        <option value="إيقاف">إيقاف</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="penalty-months">عدد أشهر التأخير</label>
+                    <input type="number" id="penalty-months" name="monthsDelayed" min="1" max="12" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="penalty-reason">سبب العقوبة</label>
+                    <textarea id="penalty-reason" name="reason" rows="3" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button" class="btn btn-secondary" id="penalty-cancel-btn">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>جاري التحميل...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
