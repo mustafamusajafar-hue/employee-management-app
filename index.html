@@ -38,6 +38,10 @@
                         <i class="fas fa-chart-bar"></i>
                         التقارير
                     </button>
+                    <button class="nav-btn" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        الإعدادات
+                    </button>
                 </nav>
             </div>
         </div>
@@ -171,6 +175,7 @@
                         <thead>
                             <tr>
                                 <th>اسم الموظف</th>
+                                <th>رقم الكتاب</th>
                                 <th>تاريخ الخطاب</th>
                                 <th>سبب التقدير</th>
                                 <th>أشهر التقديم</th>
@@ -238,6 +243,67 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="section">
+                <div class="section-header">
+                    <h2>إعدادات النظام</h2>
+                    <p>إعدادات خاصة بالنظام العراقي</p>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="setting-card">
+                        <h3>إعدادات خطابات الشكر</h3>
+                        <div class="form-group">
+                            <label for="book-number-prefix">بادئة رقم الكتاب</label>
+                            <input type="text" id="book-number-prefix" placeholder="مثال: ش.ت/" value="ش.ت/">
+                        </div>
+                        <div class="form-group">
+                            <label for="auto-book-numbering">ترقيم تلقائي للكتب</label>
+                            <input type="checkbox" id="auto-book-numbering" checked>
+                            <span>تفعيل الترقيم التلقائي لكتب الشكر</span>
+                        </div>
+                        <button class="btn btn-primary" id="save-appreciation-settings">حفظ الإعدادات</button>
+                    </div>
+                    
+                    <div class="setting-card">
+                        <h3>إعدادات التاريخ والعملة</h3>
+                        <div class="form-group">
+                            <label for="date-format">تنسيق التاريخ</label>
+                            <select id="date-format">
+                                <option value="ar-IQ">العراقي (dd/mm/yyyy)</option>
+                                <option value="ar-SA">السعودي (dd/mm/yyyy)</option>
+                                <option value="en-US">الأمريكي (mm/dd/yyyy)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="currency-format">العملة</label>
+                            <select id="currency-format">
+                                <option value="IQD">دينار عراقي (IQD)</option>
+                                <option value="SAR">ريال سعودي (SAR)</option>
+                                <option value="USD">دولار أمريكي (USD)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="save-locale-settings">حفظ الإعدادات</button>
+                    </div>
+
+                    <div class="setting-card">
+                        <h3>إعدادات الدرجات الوظيفية</h3>
+                        <div class="form-group">
+                            <label for="grade-system">نظام الدرجات</label>
+                            <select id="grade-system">
+                                <option value="iraqi">النظام العراقي (1-10)</option>
+                                <option value="saudi">النظام السعودي (1-4)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="promotion-period">فترة الترقية الافتراضية (بالأشهر)</label>
+                            <input type="number" id="promotion-period" value="36" min="12" max="60">
+                        </div>
+                        <button class="btn btn-primary" id="save-grade-settings">حفظ الإعدادات</button>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
@@ -267,6 +333,12 @@
                         <option value="الدرجة الثانية">الدرجة الثانية</option>
                         <option value="الدرجة الثالثة">الدرجة الثالثة</option>
                         <option value="الدرجة الرابعة">الدرجة الرابعة</option>
+                        <option value="الدرجة الخامسة">الدرجة الخامسة</option>
+                        <option value="الدرجة السادسة">الدرجة السادسة</option>
+                        <option value="الدرجة السابعة">الدرجة السابعة</option>
+                        <option value="الدرجة الثامنة">الدرجة الثامنة</option>
+                        <option value="الدرجة التاسعة">الدرجة التاسعة</option>
+                        <option value="الدرجة العاشرة">الدرجة العاشرة</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -315,6 +387,10 @@
                     <select id="appreciation-employee" name="employeeId" required>
                         <option value="">اختر الموظف</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="appreciation-book-number">رقم الكتاب</label>
+                    <input type="text" id="appreciation-book-number" name="bookNumber" required>
                 </div>
                 <div class="form-group">
                     <label for="appreciation-date">تاريخ الخطاب</label>
