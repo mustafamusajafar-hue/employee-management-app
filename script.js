@@ -12,6 +12,7 @@ class EmployeeManagementSystem {
 
     init() {
         this.setupEventListeners();
+        this.initializeSettings();
         this.showSection('dashboard');
         this.updateDashboard();
         this.renderEmployeesTable();
@@ -43,13 +44,16 @@ class EmployeeManagementSystem {
     formatDate(date) {
         if (!date) return '';
         const d = new Date(date);
-        return d.toLocaleDateString('ar-SA');
+        const locale = this.settings?.dateFormat || 'ar-IQ';
+        return d.toLocaleDateString(locale);
     }
 
     formatCurrency(amount) {
-        return new Intl.NumberFormat('ar-SA', {
+        const locale = this.settings?.dateFormat || 'ar-IQ';
+        const currency = this.settings?.currencyFormat || 'IQD';
+        return new Intl.NumberFormat(locale, {
             style: 'currency',
-            currency: 'SAR'
+            currency: currency
         }).format(amount);
     }
 
@@ -91,12 +95,18 @@ class EmployeeManagementSystem {
     calculateNextPromotionDate(employee) {
         if (!employee.lastPromotionDate) return null;
         
-        // Get promotion period based on job grade (simplified logic)
+        // Get promotion period based on job grade (Iraqi system)
         const promotionPeriods = {
-            'الدرجة الأولى': 60, // 5 years
-            'الدرجة الثانية': 48, // 4 years
-            'الدرجة الثالثة': 36, // 3 years
-            'الدرجة الرابعة': 24  // 2 years
+            'الدرجة الأولى': 60,    // 5 years
+            'الدرجة الثانية': 48,   // 4 years
+            'الدرجة الثالثة': 36,   // 3 years
+            'الدرجة الرابعة': 36,   // 3 years
+            'الدرجة الخامسة': 36,   // 3 years
+            'الدرجة السادسة': 36,   // 3 years
+            'الدرجة السابعة': 36,   // 3 years
+            'الدرجة الثامنة': 36,   // 3 years
+            'الدرجة التاسعة': 36,   // 3 years
+            'الدرجة العاشرة': 36    // 3 years
         };
         
         const promotionPeriod = promotionPeriods[employee.jobGrade] || 36;
@@ -528,6 +538,12 @@ class EmployeeManagementSystem {
         const modal = document.getElementById('appreciation-modal');
         const form = document.getElementById('appreciation-form');
         form.reset();
+        
+        // Auto-generate book number if enabled
+        if (this.settings?.autoBookNumbering) {
+            document.getElementById('appreciation-book-number').value = this.generateBookNumber();
+        }
+        
         modal.classList.add('active');
     }
 
@@ -540,6 +556,7 @@ class EmployeeManagementSystem {
         const letterData = {
             id: this.generateId(),
             employeeId: formData.get('employeeId'),
+            bookNumber: formData.get('bookNumber'),
             date: formData.get('date'),
             reason: formData.get('reason'),
             monthsAdvanced: parseInt(formData.get('monthsAdvanced'))
@@ -580,6 +597,7 @@ class EmployeeManagementSystem {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${employee.name}</td>
+                <td>${letter.bookNumber || 'غير محدد'}</td>
                 <td>${this.formatDate(letter.date)}</td>
                 <td>${letter.reason}</td>
                 <td>${letter.monthsAdvanced} شهر</td>
@@ -786,6 +804,121 @@ class EmployeeManagementSystem {
 
         this.populateEmployeeSelects();
         this.showToast('تم تحميل البيانات التجريبية', 'info');
+    }
+
+    // Settings Methods
+    initializeSettings() {
+        // Load settings from storage
+        this.settings = this.loadFromStorage('systemSettings') || {
+            bookNumberPrefix: 'ش.ت/',
+            autoBookNumbering: true,
+            dateFormat: 'ar-IQ',
+            currencyFormat: 'IQD',
+            gradeSystem: 'iraqi',
+            promotionPeriod: 36
+        };
+
+        // Apply settings to UI
+        this.applySettings();
+        this.setupSettingsEventListeners();
+    }
+
+    applySettings() {
+        // Apply settings to form elements
+        document.getElementById('book-number-prefix').value = this.settings.bookNumberPrefix;
+        document.getElementById('auto-book-numbering').checked = this.settings.autoBookNumbering;
+        document.getElementById('date-format').value = this.settings.dateFormat;
+        document.getElementById('currency-format').value = this.settings.currencyFormat;
+        document.getElementById('grade-system').value = this.settings.gradeSystem;
+        document.getElementById('promotion-period').value = this.settings.promotionPeriod;
+    }
+
+    setupSettingsEventListeners() {
+        // Appreciation settings
+        document.getElementById('save-appreciation-settings').addEventListener('click', () => {
+            this.settings.bookNumberPrefix = document.getElementById('book-number-prefix').value;
+            this.settings.autoBookNumbering = document.getElementById('auto-book-numbering').checked;
+            this.saveToStorage('systemSettings', this.settings);
+            this.showToast('تم حفظ إعدادات خطابات الشكر', 'success');
+        });
+
+        // Locale settings
+        document.getElementById('save-locale-settings').addEventListener('click', () => {
+            this.settings.dateFormat = document.getElementById('date-format').value;
+            this.settings.currencyFormat = document.getElementById('currency-format').value;
+            this.saveToStorage('systemSettings', this.settings);
+            this.showToast('تم حفظ إعدادات التاريخ والعملة', 'success');
+            // Refresh displays
+            this.renderEmployeesTable();
+            this.renderAppreciationTable();
+            this.renderPenaltiesTable();
+        });
+
+        // Grade settings
+        document.getElementById('save-grade-settings').addEventListener('click', () => {
+            this.settings.gradeSystem = document.getElementById('grade-system').value;
+            this.settings.promotionPeriod = parseInt(document.getElementById('promotion-period').value);
+            this.saveToStorage('systemSettings', this.settings);
+            this.showToast('تم حفظ إعدادات الدرجات الوظيفية', 'success');
+            // Update grade options if needed
+            this.updateGradeOptions();
+        });
+    }
+
+    updateGradeOptions() {
+        const gradeSelect = document.getElementById('employee-grade');
+        const currentValue = gradeSelect.value;
+        
+        // Clear existing options except the first one
+        while (gradeSelect.children.length > 1) {
+            gradeSelect.removeChild(gradeSelect.lastChild);
+        }
+
+        // Add options based on grade system
+        if (this.settings.gradeSystem === 'iraqi') {
+            for (let i = 1; i <= 10; i++) {
+                const option = document.createElement('option');
+                option.value = `الدرجة ${this.getArabicOrdinal(i)}`;
+                option.textContent = `الدرجة ${this.getArabicOrdinal(i)}`;
+                gradeSelect.appendChild(option);
+            }
+        } else {
+            const grades = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة'];
+            grades.forEach(grade => {
+                const option = document.createElement('option');
+                option.value = `الدرجة ${grade}`;
+                option.textContent = `الدرجة ${grade}`;
+                gradeSelect.appendChild(option);
+            });
+        }
+
+        // Restore previous value if it exists
+        if (currentValue) {
+            gradeSelect.value = currentValue;
+        }
+    }
+
+    getArabicOrdinal(number) {
+        const ordinals = {
+            1: 'الأولى', 2: 'الثانية', 3: 'الثالثة', 4: 'الرابعة', 5: 'الخامسة',
+            6: 'السادسة', 7: 'السابعة', 8: 'الثامنة', 9: 'التاسعة', 10: 'العاشرة'
+        };
+        return ordinals[number] || number.toString();
+    }
+
+    generateBookNumber() {
+        if (!this.settings.autoBookNumbering) return '';
+        
+        const currentYear = new Date().getFullYear();
+        const existingNumbers = this.appreciationLetters
+            .filter(letter => letter.bookNumber && letter.bookNumber.includes(currentYear))
+            .map(letter => {
+                const match = letter.bookNumber.match(/(\d+)/);
+                return match ? parseInt(match[1]) : 0;
+            });
+        
+        const nextNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) + 1 : 1;
+        return `${this.settings.bookNumberPrefix}${nextNumber}/${currentYear}`;
     }
 }
 
